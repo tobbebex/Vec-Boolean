@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeOperators, FlexibleInstances, MultiParamTypeClasses, UndecidableInstances #-}
 -----------------------------------------------------------------------------
 --
 -- Module      :  Data.Vec.Boolean
