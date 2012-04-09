@@ -14,7 +14,7 @@ category:            Math, Data
 author:              Tobias Bexelius
 library 
   build-depends:   
-                   base >= 4,
+                   base >= 4 && <5,
                    Vec == 0.9.8,
                    Boolean == 0.0.1
   hs-source-dirs:  src
