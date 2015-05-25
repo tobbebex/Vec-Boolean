@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeOperators, FlexibleInstances, MultiParamTypeClasses, UndecidableInstances #-}
+{-# LANGUAGE TypeOperators, FlexibleInstances, MultiParamTypeClasses, TypeFamilies, FlexibleContexts, UndecidableInstances #-}
 -----------------------------------------------------------------------------
 --
 -- Module      :  Data.Vec.Boolean
@@ -26,17 +26,27 @@ import Data.Boolean
 import Data.Vec
 import Prelude hiding (any, all)
 
-instance Boolean bool => IfB bool () where
-    ifB _ _ _ = ()
+type instance BooleanOf (a:.b) = BooleanOf a    
 
-instance (IfB bool a, IfB bool b) => IfB bool (a:.b) where
+instance IfB a => IfB (a:.()) where
+    ifB bool (a1:.()) (a2:.()) = ifB bool a1 a2 :. ()
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.()), Boolean bool, IfB a, IfB (b:.())) => IfB (a:.b:.()) where
+    ifB bool (a1:.b1) (a2:.b2) = ifB bool a1 a2 :. ifB bool b1 b2
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.c:.()), Boolean bool, IfB a, IfB (b:.c:.())) => IfB (a:.b:.c:.()) where
+    ifB bool (a1:.b1) (a2:.b2) = ifB bool a1 a2 :. ifB bool b1 b2
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.c:.d:.()), Boolean bool, IfB a, IfB (b:.c:.d:.())) => IfB (a:.b:.c:.d:.()) where
     ifB bool (a1:.b1) (a2:.b2) = ifB bool a1 a2 :. ifB bool b1 b2
 
-instance Boolean bool => EqB bool () where
-    _ ==* _ = true
-    _ /=* _ = false
-
-instance (EqB bool a, EqB bool b) => EqB bool (a:.b) where
+instance EqB a => EqB (a:.()) where
+    (a1:.()) ==* (a2:.()) = a1==*a2
+    (a1:.()) /=* (a2:.()) = a1/=*a2
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.()), Boolean bool, EqB a, EqB (b:.())) => EqB (a:.b:.()) where
+    (a1:.b1) ==* (a2:.b2) = a1==*a2 &&* b1==*b2
+    (a1:.b1) /=* (a2:.b2) = a1/=*a2 ||* b1/=*b2
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.c:.()), Boolean bool, EqB a, EqB (b:.c:.())) => EqB (a:.b:.c:.()) where
+    (a1:.b1) ==* (a2:.b2) = a1==*a2 &&* b1==*b2
+    (a1:.b1) /=* (a2:.b2) = a1/=*a2 ||* b1/=*b2
+instance (bool ~ BooleanOf a, bool ~ BooleanOf (b:.c:.d:.()), Boolean bool, EqB a, EqB (b:.c:.d:.())) => EqB (a:.b:.c:.d:.()) where
     (a1:.b1) ==* (a2:.b2) = a1==*a2 &&* b1==*b2
     (a1:.b1) /=* (a2:.b2) = a1/=*a2 ||* b1/=*b2
 
@@ -47,3 +57,4 @@ all = fold (&&*)
 -- | Evaluates to 'false' if all elements in the fixed length list is 'false'
 any :: (Boolean bool, Fold v bool) => v -> bool
 any = fold (||*)
+

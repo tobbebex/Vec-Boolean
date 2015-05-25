@@ -1,9 +1,8 @@
 name:                Vec-Boolean
-version:             1.0.5
-cabal-version:       >= 1.8
+version:             1.0.7
+cabal-version:       >= 1.18
 build-type:          Simple
 license:             BSD3
-license-file:        ""
 copyright:           Tobias Bexelius
 maintainer:          Tobias Bexelius
 synopsis:            Provides Boolean instances for the Vec package
@@ -13,9 +12,10 @@ category:            Math, Data
 author:              Tobias Bexelius
 library 
   build-depends:   
-                   base >= 4 && <5,
-                   Vec == 0.9.9,
-                   Boolean == 0.0.1
+                   Vec         >= 1.0.5 && <2.0,
+                   base        >= 4.7   && <5,
+                   Boolean     >= 0.2.3 && <0.3
+  default-language: Haskell2010
   hs-source-dirs:  src
   ghc-options:     -Wall
   exposed-modules: Data.Vec.Boolean
